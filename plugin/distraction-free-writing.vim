@@ -9,12 +9,12 @@ if has("gui_running")
     colorscheme iawriter
     set background=light
     set gfn=Cousine:h18                 " font to use
-    set lines=40 columns=100  				  " size of the editable area
+    set lines=40 columns=80    				  " size of the editable area
     set fuoptions=background:#00f5f6f6  " bakground color
     set guioptions-=r 					        " remove righ scrollbar
     set laststatus=0 					          " don't show status line
     set noruler 						            " don't show ruler
-    "set fullscreen 						          " go to fullscreen editing mode
+    set fullscreen 						          " go to fullscreen editing mode
     set linebreak 						          " break the lines on words
   endfunction
 endif
