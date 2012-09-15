@@ -19,57 +19,65 @@
 " You can change it in .vimrc as follows:
 " :map <F4> :call ToggleDistractionFreeWriting()<CR>
 
-function! DistractionFreeWriting()
-		exec "colorscheme ".g:fullscreen_colorscheme
-		exec "set gfn=".g:fullscreen_font
+if(has('gui_running'))
 
-		set background=light
-		set lines=40 columns=100  				 " size of the editable area
-		set linespace=5 									 " spacing between lines
-		set fuoptions=background:#00f5f6f6 " bakground color
-		set guioptions-=r 								 " remove righ scrollbar
-		set laststatus=0 									 " don't show status line
-		set noruler 											 " don't show ruler
-		set fullscreen 										 " go to fullscreen editing mode
-		set linebreak 										 " break the lines on words
-endfunction
+  function! DistractionFreeWriting()
+    exec "colorscheme ".g:fullscreen_colorscheme
+    exec "set gfn=".g:fullscreen_font
 
-function! ToggleDistractionFreeWriting()
-	if &fullscreen
-		exec "set background=".s:prev_background
-		exec "set lines=".s:prev_lines
-		exec "set columns=".s:prev_columns
-		exec "set linespace=".s:prev_linespace
-		exec "set fuoptions=".s:prev_fuoptions
-		exec "set laststatus=".s:prev_laststatus
-		exec "set guioptions+=r"
- 
-		set noruler!
-		set fullscreen!
-		set linebreak!
+    set background=light
+    set lines=40 columns=80            " size of the editable area
+    set linespace=5                    " spacing between lines
+    set fuoptions=background:#00f5f6f6 " bakground color
+    set guioptions-=r                  " remove righ scrollbar
+    set laststatus=0                   " don't show status line
+    set noruler                        " don't show ruler
+    set fullscreen                     " go to fullscreen editing mode
+    set linebreak                      " break the lines on words
+  endfunction
 
-		exec "colorscheme ".g:normal_colorscheme
-		exec "set gfn=".g:normal_font 
-	else
-		let s:prev_background = &background
-		let s:prev_gfn = &gfn
-		let s:prev_lines = &lines
-		let s:prev_columns = &columns
-		let s:prev_linespace = &linespace
-		let s:prev_fuoptions = &fuoptions
-		let s:prev_laststatus = &laststatus
-		let s:prev_font = &gfn
+  function! ToggleDistractionFreeWriting()
+    if &fullscreen
+      exec "set background=".s:prev_background
+      exec "set lines=".s:prev_lines
+      exec "set columns=".s:prev_columns
+      exec "set linespace=".s:prev_linespace
+      exec "set fuoptions=".s:prev_fuoptions
+      exec "set laststatus=".s:prev_laststatus
+      exec "set guioptions+=r"
 
-		call DistractionFreeWriting()	
-	endif
-endfunction
+      set noruler!
+      set fullscreen!
+      set linebreak!
 
-let g:fullscreen_colorscheme = "iawriter"
-let g:fullscreen_font = "Cousine:h14"
-let g:normal_colorscheme = "codeschool"
-let g:normal_font="Inconsolata:h14"
+      exec "colorscheme ".g:normal_colorscheme
+      exec "set gfn=".g:normal_font
+    else
+      let s:prev_background = &background
+      let s:prev_gfn = &gfn
+      let s:prev_lines = &lines
+      let s:prev_columns = &columns
+      let s:prev_linespace = &linespace
+      let s:prev_fuoptions = &fuoptions
+      let s:prev_laststatus = &laststatus
+      let s:prev_font = &gfn
 
-:map <F4> :call ToggleDistractionFreeWriting()<CR>
+      call DistractionFreeWriting()	
+    endif
+  endfunction
 
-" turn-on distraction free writing mode by default for markdown files
-" au BufNewFile,BufRead *.{md,mdown,mkd,mkdn,markdown,mdwn} call DistractionFreeWriting()
+  let g:fullscreen_colorscheme = "iawriter"
+  let g:fullscreen_font = "Cousine:h18"
+  let g:normal_colorscheme = "getafe"
+  let g:normal_font="Consolas:h16"
+
+  " Toggle DistractionFreeWriting
+  :map <F4> :call ToggleDistractionFreeWriting()<CR>
+
+  " Toggle spell-checking
+  :map <F5> :setlocal spell! spelllang=en_us<CR>
+
+  " turn-on distraction free writing mode by default for markdown files
+  au BufNewFile,BufRead *.{md,mdown,mkd,mkdn,markdown,mdwn} call DistractionFreeWriting()
+
+endif
