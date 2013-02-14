@@ -19,65 +19,106 @@
 " You can change it in .vimrc as follows:
 " :map <F4> :call ToggleDistractionFreeWriting()<CR>
 
-if(has('gui_running'))
+"initVariable borrowed from NERDTree
+function! s:initVariable(var, value)
+  if !exists(a:var)
+    exec 'let ' . a:var . ' = ' . "'" . a:value . "'"
+    return 1
+  endif
+  return 0
+endfunction
 
-  function! DistractionFreeWriting()
-    exec "colorscheme ".g:fullscreen_colorscheme
-    exec "set gfn=".g:fullscreen_font
+"Initialize variables
+call s:initVariable("g:distractionFreeFullscreen", "off")
 
-    set background=light
-    set lines=40 columns=69            " size of the editable area
-    set linespace=5                    " spacing between lines
+function! DistractionFreeWriting()
+  exec "colorscheme ".g:fullscreen_colorscheme
+  " added escape function to allow for multiword font names
+  " (AmaruCoder)
+  exec "set gfn=".escape(g:fullscreen_font,' ')
+
+  set background=light
+  set lines=40 columns=100  				 " size of the editable area
+  set linespace=5 									 " spacing between lines
+  set guioptions-=r 								 " remove righ scrollbar
+  set laststatus=0 									 " don't show status line
+  set noruler 											 " don't show ruler
+  if has("gui_macvim")
     set fuoptions=background:#00f5f6f6 " bakground color
-    set guioptions-=r                  " remove righ scrollbar
-    set laststatus=0                   " don't show status line
-    set noruler                        " don't show ruler
-    set fullscreen                     " go to fullscreen editing mode
-    set linebreak                      " break the lines on words
-  endfunction
+    set fullscreen 		" go to fullscreen editing mode
+  else
+    set guioptions-=m 								 " remove menu
+    set guioptions-=T 								 " remove Toolbar
+  endif
+  let g:distractionFreeFullscreen = 'on'
+  set linebreak 										 " break the lines on words
+endfunction
 
-  function! ToggleDistractionFreeWriting()
-    if &fullscreen
-      exec "set background=".s:prev_background
-      exec "set lines=".s:prev_lines
-      exec "set columns=".s:prev_columns
-      exec "set linespace=".s:prev_linespace
+function! ToggleDistractionFreeWriting()
+  if g:distractionFreeFullscreen == 'on'
+    exec "set background=".s:prev_background
+    exec "set lines=".s:prev_lines
+    exec "set columns=".s:prev_columns
+    exec "set linespace=".s:prev_linespace
+    exec "set laststatus=".s:prev_laststatus
+    exec "set guioptions+=r"
+
+    set noruler!
+    if has("gui_macvim")
       exec "set fuoptions=".s:prev_fuoptions
-      exec "set laststatus=".s:prev_laststatus
-      exec "set guioptions+=r"
-
-      set noruler!
       set fullscreen!
-      set linebreak!
-
-      exec "colorscheme ".g:normal_colorscheme
-      exec "set gfn=".g:normal_font
     else
-      let s:prev_background = &background
-      let s:prev_gfn = &gfn
-      let s:prev_lines = &lines
-      let s:prev_columns = &columns
-      let s:prev_linespace = &linespace
-      let s:prev_fuoptions = &fuoptions
-      let s:prev_laststatus = &laststatus
-      let s:prev_font = &gfn
-
-      call DistractionFreeWriting()	
+      set guioptions+=m 								 " add menu
     endif
-  endfunction
+    let g:distractionFreeFullscreen = 'off'
+    set linebreak!
 
+    exec "colorscheme ".g:normal_colorscheme
+    " added escape function to allow for multiword font names
+    " (AmaruCoder)
+    exec "set gfn=".escape(g:normal_font,' ')
+  else
+    let s:prev_background = &background
+    let s:prev_gfn = &gfn
+    let s:prev_lines = &lines
+    let s:prev_columns = &columns
+    let s:prev_linespace = &linespace
+    if has("gui_macvim")
+      let s:prev_fuoptions = &fuoptions
+    endif
+    let s:prev_laststatus = &laststatus
+    let s:prev_font = &gfn
+
+    call DistractionFreeWriting()	
+  endif
+endfunction
+
+if !exists('g:fullscreen_colorscheme')
   let g:fullscreen_colorscheme = "iawriter"
-  let g:fullscreen_font = "Cousine:h18"
-  let g:normal_colorscheme = "getafe"
-  let g:normal_font="Consolas:h16"
-
-  " Toggle DistractionFreeWriting
-  :map <F4> :call ToggleDistractionFreeWriting()<CR>
-
-  " Toggle spell-checking
-  :map <F5> :setlocal spell! spelllang=en_us<CR>
-
-  " turn-on distraction free writing mode by default for markdown files
-  au BufNewFile,BufRead *.{md,mdown,mkd,mkdn,markdown,mdwn} call DistractionFreeWriting()
-
 endif
+
+if !exists('g:fullscreen_font')
+  if has("gui_macvim")
+    let g:fullscreen_font = "Consolas:h16"
+  else
+    let g:fullscreen_font = "Cousine:h16"
+  endif
+endif
+
+if !exists('g:normal_colorscheme')
+  if has("gui_macvim")
+    let g:normal_colorscheme = "codeschool"
+  else
+    let g:normal_colorscheme = g:colors_name
+  end
+endif
+
+if !exists('g:normal_font')
+  if has("gui_macvim")
+    let g:normal_font="Consolas:h16"
+  else
+    let g:normal_font=&guifont
+  endif
+endif
+
+:map <F4> :call ToggleDistractionFreeWriting()<CR>
