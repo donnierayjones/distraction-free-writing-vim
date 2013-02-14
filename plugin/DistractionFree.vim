@@ -26,7 +26,7 @@ if(has('gui_running'))
     exec "set gfn=".g:fullscreen_font
 
     set background=light
-    set lines=40 columns=80            " size of the editable area
+    set lines=40 columns=69            " size of the editable area
     set linespace=5                    " spacing between lines
     set fuoptions=background:#00f5f6f6 " bakground color
     set guioptions-=r                  " remove righ scrollbar
